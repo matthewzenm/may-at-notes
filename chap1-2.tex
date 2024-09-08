@@ -1,0 +1,340 @@
+\documentclass[a4paper]{amsart}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{tikz-cd}
+\usepackage{mathrsfs}
+\usepackage{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\theoremstyle{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem{eg}[thm]{Example}
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+
+\DeclareMathOperator*{\colim}{colim}
+
+\title{Seminar 1: Fundamental Group}
+\author{Zeng Mengchen}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Fundamental Group}
+
+\subsection{Definition}
+We have learnt the notion of fundamental group in topology course, now we review it here.
+
+A \emph{homotopy} between maps $f,g:X\to Y$ is a map $h:I\times X\to Y$ such that $h(0,x)=f(x)$, $h(1,x)=g(x)$.
+Two paths $f,g:a\to b$ in $X$ is defined to be equivalent if there exists a homotopy $h:I\times I\to X$ such that
+\[h(t,0)=a,\ h(t,1)=b,\ h(0,s)=f(s),\ h(1,s)=g(s).\]
+Denote the equivalence class of $f$ by $[f]$.
+A \emph{loop} is a path with $f(0)=f(1)$.
+
+Define $\pi_1(X,x)$ to be the collection of all equivalent class of loops with starting point and end point $x$.
+We give a group structure on $\pi_1(X,x)$.
+Let $f:a\to b$, $g:b\to c$ be paths, define $g\cdot f$ to be the the path
+\[g\cdot f(s)=\begin{cases}
+    f(2s), & 0\leq s\leq 1/2,\\
+    g(2s-1), & 1/2\leq s\leq 1,
+\end{cases}\]
+and define $[g][f]:=[g\cdot f]$.
+We also define the inverse $g^{-1}(s)=g(1-s)$ and $[g]^{-1}=[g^{-1}]$.
+Moreover, the identity is defined to be the constant loop $c_x$.
+Clearly these definitions make $\pi_1(X,x)$ into a group.
+
+\subsection{Choice of Base Point}
+Let $a:x\to y$ be a path, we define a homomorphism from $\gamma[a]:\pi_1(X,x)\to\pi_1(X,y)
+$ to be $\gamma[a][f]=[a\cdot f\cdot a^{-1}]$.
+Clearly we have $\gamma[b\cdot a]=\gamma[b]\circ\gamma[a]$, hence $\gamma[a]$ is an isomorphism.
+Therefore, we have
+\begin{prop}
+    For $x,y\in X$ in the same path connected component, $\pi_1(X,x)$ is (not necessarily canonical) isomorphic to $\pi_1(X,y)$.
+\end{prop}
+
+If $\pi_1(X,x)$ happens to be abelian, then let $a':x\to y$ be another path, we have
+\begin{align*}
+    \varphi[(a')^{-1}]\circ\varphi[a]([f])&=[(a')^{-1}\cdot a][f][a^{-1}\cdot a']\\
+    &=[f][(a')^{-1}\cdot a][a^{-1}\cdot a']\\
+    &=[f],
+\end{align*}
+that is, the isomorphism between $\pi_1(X,x)$ and $\pi_1(X,y)$ does not depend on the choice of path, namely, canonical.
+
+\subsection{Homotopy Invariance}
+
+Let $p:X\to Y$ be a map, define $p_*:\pi_1(X,x)\to\pi_1(Y,p(x))$ to be
+\[p_*[f]=[p\circ f].\]
+Clearly $p_*$ is a homomorphism, and identity map $\operatorname{id}:X\to X$ induces the identity homomorphism.
+Moreover, if $p:X\to Y$, $q:Y\to Z$, then we have $q_*\circ p_*=(q\circ p)_*$.
+
+Now suppose given two maps $p,q:X\to Y$ and a homotopy $h:p\simeq q$, a path $a(t)=h(x,t)$, we have
+\begin{prop}
+    The following diagram is commutative:
+    \[\begin{tikzcd}
+         & \pi_1(X,x) \ar[dl, "{p_*}"'] \ar[dr, "{q_*}"] & \\
+        \pi_1(Y,p(x)) \ar[rr, "{\gamma[a]}"] & & \pi_1(Y,q(x)).
+    \end{tikzcd}\]
+\end{prop}
+\begin{proof}
+    Let $f:I\to X$ be a loop, we must show $q\circ f$ is equivalent to $a\cdot(p\circ f)\cdot a^{-1}$.
+    This is equivalent to show the constant loop $c_{p(x)}$ is equivalent to $a^{-1}\cdot(q\circ f)^{-1}\cdot a\cdot(p\circ f)$.
+    Define $j:I\times I\to Y$ by $j(t,s)=h(t,f(s))$, then
+    \[j(0,s)=(p\circ f)(s),\ j(1,s)=(q\circ f)(s),\ j(t,0)=a(t)=j(t,1).\]
+    Thus we have a schematic diagram of $j$:
+    \[\begin{tikzcd}[sep=huge]
+        \ \ar[r, "a"] & \ \\
+        \ \ar[u, "{p\circ f}"] \ar[r, "a"'] & \ \ar[u, "{q\circ f}"']
+    \end{tikzcd}\]
+    Thus, going clockwise around the boundary starting at $(0,0)$, we traverse $a^{-1}\cdot(q\circ f)^{-1}\cdot a\cdot(p\circ f)$.
+    Since linear homotopy connects the boundary to origin, $j$ induces a homotopy between the composite and $c_{p(x)}$.
+\end{proof}
+
+\subsection{Calculations}
+\begin{lem}
+    $\pi_1(\mathbb{R},0)=0$.
+\end{lem}
+\begin{proof}
+    We use linear homotopy $k:I\times\mathbb{R}\to\mathbb{R}$ by $k(t,s)=(1-t)s$, then $k$ connects identity and constant map at $0$.
+    Hence by homotopy invariance, we have $\pi_1(\mathbb{R},0)=0$.
+\end{proof}
+
+\begin{prop}
+    $\pi_1(\mathbb{S}^1,1)\cong\mathbb{Z}$.
+\end{prop}
+Here we regard $\mathbb{S}^1=\{z\in\mathbb{C}:\ |z|=1\}$.
+We postpone the proof until we develop the theory of covering spaces.
+
+\section{Catagorical Language}
+
+\subsection{Categories}
+A \emph{category} consists of a collection of objects and a set $\hom(A,B)$ of morphisms for each pair of objects $A$ and $B$.
+In each $\hom(A,B)$, there exists an identity morphism $\operatorname{id}$ and a composition law
+\[\circ:\hom(B,C)\times\hom(A,B)\to\hom(A,C)\]
+for each triple of objects $A,B,C$.
+Composition and identity morphisms must make the following diagrams commute:
+\[\begin{tikzcd}
+    A \ar[r, "f"] \ar[dr, "{g\circ f}"'] & B \ar[d, "g"] \ar[dr, "{h\circ g}"] \\
+     & C \ar[r, "h"] & D,
+\end{tikzcd}\]
+\[\begin{tikzcd}
+    A \ar[r, "f"] \ar[dr, "{f}"'] & B \ar[d, "{\operatorname{id}}"] \\
+     & B,
+\end{tikzcd}\]
+\[\begin{tikzcd}
+    A \ar[d,"{\operatorname{id}}"'] \ar[dr,"f"] & \\
+    A \ar[r, "f"'] & B.
+\end{tikzcd}\]
+A morphism $f\in\hom(A,B)$ is called an \emph{isomorphism} if there exists a $g\in\hom(B,A)$ such that $g\circ f=\operatorname{id}_A$, $f\circ g=\operatorname{id}_B$.
+
+We list some frequently used categories here.
+\begin{itemize}
+    \item $\mathsf{Set}$, category of sets, with morphisms to be mappings.
+    \item $\mathsf{Grpd}$, category of groupoids.
+    Groupoids are defined to be small categories (i.e.\ whose collection of objects is a set) with all morphisms are isomorphisms, and morphisms between groupoids are functors (whose definition will be expalined later).
+    \item $\mathsf{Grp}$, category of groups.
+    Groups are groupoids with single object.
+    \item $\mathsf{Ab}$, category of abelian groups.
+    \item $\mathsf{Top}$, category of topological spaces, with morphisms to be continuous mappings, i.e.\ maps.
+    \item $\mathsf{Top}^*$, category of pointed topological spaces, with morphisms to be maps that map the base point to base point.
+\end{itemize}
+
+We also define the \emph{opposite category} of a category $\mathsf{C}$ (denoting $\mathsf{C}^{\mathrm{op}}$) consisting of same objects as $\mathsf{C}$ and $\hom_{\mathsf{C}^{\mathrm{op}}}(A,B)=\hom_\mathsf{C}(B,A)$.
+
+\subsection{Functors and Natural Transformations}
+
+We define a \emph{covariant functor} $F$ from category $\mathsf{C}$ to category $\mathsf{D}$ to be an assignment of each object $A$ in $\mathsf{C}$ an object $F(A)$ in $\mathsf{D}$, and of each morphism $f$ in $\hom(A,B)$ a morphism $F(f)\in\hom(F(A),F(B))$.
+Also we define a \emph{contravariant functor} from $\mathsf{C}$ to $\mathsf{D}$ to be a covariant functor from $\mathsf{C}^{\mathrm{op}}$ to $\mathsf{D}$.
+
+A \emph{natural transformation} from a functor $F:\mathsf{C}\to\mathsf{D}$ to a functor $G$ is a family of morphisms $\varphi_A:F(A)\to G(A)$ making the following diagram commute for any object $A,B$ and $f\in\hom(A,B)$
+\[\begin{tikzcd}
+    F(A) \ar[r, "{\varphi_A}"] \ar[d, "F(f)"] & G(A) \ar[d, "{G(f)}"] \\
+    F(B) \ar[r, "{\varphi_B}"] & G(B).
+\end{tikzcd}\]
+
+\begin{eg}
+    \begin{enumerate}
+        \item The forgetful functor $\mathsf{Grp}\to\mathsf{Set}$, which maps a group to its underlying set.
+        \item The free group functor $\mathsf{Set}\to\mathsf{Grp}$, which maps a set $S$ to a free group $F(S)$ with basis $S$.
+        A free group with basis $S$ is characterized by the following universal property:
+        any mapping from $S$ to a group $G$ factors through the natural embedding $\iota:S\to F(S)$, that is for $f:S\to G$, there exists a unique homomorphism $\tilde{f}$ making the following diagram commute:
+        \[\begin{tikzcd}
+            F(S) \ar[r, dashed, "\tilde{f}"] & G \\
+            S \ar[u, "\iota"] \ar[ur, "f"].
+        \end{tikzcd}\]
+        If $g:S\to T$ is a mapping of sets, then $F(g)$ is induced by above universal property.
+        \item The natural embedding of double dual in the category of vector spaces.
+        Let $\operatorname{Id}$ be the identity functor, and denote the double dual of $V$ by $V^{**}$.
+        Then $v\mapsto(f\mapsto f(v))$ for any $v\in V$ and linear functional $f$ defines an injection from $V$ to $V^{**}$.
+        One can check the family of injections consists a natural transformation from $\operatorname{Id}$ to double dual.
+        In particular, if $V$ is finite dimensional, this shows $V^{**}$ is canonically isomorphic to $V$.
+    \end{enumerate}
+\end{eg}
+
+\subsection{Colimits and Limits}
+In category theory, an object $A$ being initial means for any other objects $B$, $\hom(A,B)$ is a singleton.
+Being terminal reverses the morphisms, this means $\hom(B,A)$ is a singleton.
+A simple exercise is to show that initial objects and terminal objects are unique up to an isomorphism if they exist.
+
+Let $\mathsf{I}$ be a small category.
+An $\mathsf{I}$-shaped diagram in category $\mathsf{C}$ is a functor $F:\mathsf{I}\to\mathsf{C}$.
+A morphism between $\mathsf{I}$-shaped diagrams is a natural transformation.
+Let $A$ be an object in $\mathsf{C}$, then there is a functor that maps all objects in $\mathsf{I}$ to $A$ and all morphisms to $\operatorname{id}_A$.
+Denote this $\mathsf{I}$-diagram by $\underline{A}$.
+
+Let $F$ be an $\mathsf{I}$-diagram, the \emph{colimit} of $F$ is the initial object among all morphisms having the form $\eta:F\to\underline{A}$, that is, $\eta$ factors through $\iota:F\to\underline{\colim{F}}$.
+Conversely, the \emph{limit} of $F$ is the terminal object among all such morphisms, that is, $\varepsilon:F\to\underline{A}$ factors through $\pi:F\to\underline{\lim{F}}$.
+Expressing in diagrams, for each map $f:D\to D'$ in $\mathsf{I}$, we have the commutative diagram for colimit:
+\[\begin{tikzcd}
+    F(D)\ar[rr, "{F(f)}"] \ar[dr, "\iota"] \ar[ddr, "\eta"] & & F(D') \ar[dl, "\iota"] \ar[ddl, "\eta"] \\
+     & \colim{F} \ar[d, dashed, "{\tilde\eta}"] & \\
+     & A, &
+\end{tikzcd}\]
+and the commutative diagram for limit:
+\[\begin{tikzcd}
+    F(D) \ar[rr, "{F(f)}"] & & F(D')\\
+     & \lim{F} \ar[lu, "\pi"] \ar[ru, "\pi"] & \\
+     & A. \ar[luu, "\varepsilon"] \ar[u, dashed, "{\tilde\varepsilon}"] \ar[ruu, "\varepsilon"]
+\end{tikzcd}\]
+
+Practically, if the diagram $F$ consists of small category $\mathsf{U}$, we usually write
+\[\colim{F}=\colim_{U\in\mathsf{U}}U,\]
+and if $\mathsf{I}$ serves as an index set of $\{U_i\}_{i\in\mathsf{I}}$, we also write
+\[\colim{F}=\colim_{i\in\mathsf{I}}U_i.\]
+For limits there are also similar notations.
+
+\begin{eg}We list some notions here.
+    \begin{enumerate}
+        \item Products and coproducts.
+        If $\mathsf{I}$ is a discrete category, then the limits and colimits indexed on $\mathsf{I}$ are products and coproducts.
+        The products in $\mathsf{Set}$, $\mathsf{Top}$, $\mathsf{Grp}$ are all Cartesian products with morphisms are projections.
+        The coproducts in $\mathsf{Set}$ and $\mathsf{Top}$ are disjoint unions, and coproducts in $\mathsf{Grp}$ are free products (multiplications are adjunctions).
+        \item Pushouts and pullbacks.
+        This is the colimit of the diagram
+        \[\begin{tikzcd}
+            e & d \ar[l] \ar[r] & f,
+        \end{tikzcd}\]
+        and the limit of the diagram
+        \[\begin{tikzcd}
+            e \ar[r] & d & f, \ar[l]
+        \end{tikzcd}\]
+        respectively.
+        \item Equalizers and coequalizers.
+        This is the limit and colimit of the following diagram
+        \[\begin{tikzcd}
+            d \ar[r, shift left] \ar[r, shift right] & d',
+        \end{tikzcd}\]
+        where the double right arrow indicates all nonidentity morphisms.
+    \end{enumerate}
+\end{eg}
+
+A category is said to be \emph{complete} if it has all limits, and to be \emph{cocomplete} if it has all colimits.
+\begin{prop}
+    A category is cocomplete if and only if it has coproducts and coequalizers.
+\end{prop}
+\begin{proof}
+    One side is trivial, we prove that a category which has coproducts and coequalizers is cocomplete.
+    We will abuse a lot of notation in the following proof.
+
+    Let $\{U_i\}_{i\in\mathsf{I}}$ be indexed by $\mathsf{I}$.
+    For any morphism $f:U_i\to U_j$, we compose $U_i\xrightarrow{f}U_j\xrightarrow{\iota}\bigsqcup_{j\in\mathsf{I}}U_j$, and obtain
+    \[\bigsqcup_{f:U_i\to U_j}U_i\xrightarrow{\varphi}\bigsqcup_{j\in\mathsf{I}}U_j.\]
+    Similarly, we obtain $\operatorname{id}$ between these two coproducts.
+    Thus we have the coequalizer
+    \[\begin{tikzcd}
+        \bigsqcup_{f:U_i\to U_j}U_i \ar[rr, shift left, "\varphi"] \ar[rr, shift right, "{\operatorname{id}}"'] \ar[dr, "\eta"'] & & \bigsqcup_{j\in\mathsf{I}}U_j \ar[dl, "\delta"]\\
+         & U. &
+    \end{tikzcd}\]
+    We claim $U$ is the colimit of $\{U_i\}_{i\in\mathsf{I}}$.
+    We must verify the universal property.
+    Suppose given a family of morphisms $f_i:U_i\to A$ compatible with morphisms in $\mathsf{I}$, we check arbitary commutative diagram
+    \[\begin{tikzcd}
+        U_i \ar[rr, "f"] \ar[dr, "{f_i}"'] & & U_j \ar[dl, "{f_j}"] \\
+         & A. &
+    \end{tikzcd}\]
+    Let $\iota_i:U_i\to\bigsqcup_{f:U_i\to U_j}U_i$ embeds $U_i$ to the one corresponds to $f$, $\iota_j:U_j\to\bigsqcup_{j\in\mathsf{I}}U_j$ be the natural embedding.
+    Then $f_j$ factors through $\iota_j$, obtaining $f_j=\delta'\circ\iota_j$.
+    For $U_i$ corresponds to $f$, we have $f_j\circ f=f_i\circ\operatorname{id}$, by the universal property, this means $\delta'\circ\varphi=\delta'\circ\operatorname{id}$.
+    Thus we can define $\eta'=\delta'\circ\varphi$.
+    Now we have a big commutative diagram:
+    \[\begin{tikzcd}
+        U_i \ar[rr, "f"] \ar[d, "{\iota_i}"] & & U_j \ar[d, "{\iota_j}"]\\
+        \bigsqcup_{f:U_i\to U_j} U_i \ar[rr, shift left, "\varphi"] \ar[rr, shift right, "\operatorname{id}"'] \ar[dr, "\eta"'] \ar[ddr, "{\eta'}"'] & & \bigsqcup_{j\in\mathsf{I}}U_j \ar[dl, "\delta"] \ar[ddl, "\delta'"] \\
+         & U \ar[d, dashed] & \\
+         & A, &
+    \end{tikzcd}\]
+    the last thing we need to do is to show $f_i=\gamma_i\circ\iota_i$, but this follows directly from the commutativity of whole diagram.
+\end{proof}
+
+By using opposite category formally, we can obtain
+\begin{prop}
+    A category is complete if and only if it has products and equalizers.
+\end{prop}
+
+\subsection{Group Object}
+
+Let $\mathsf{C}$ be a category which has products and initial object $*$.
+A \emph{group object} consists of an object $G$ and a morphism $\mu:G\times G\to G$ called multiplication, a morphism $e:*\to G$ called unit element and a morphism $i:G\to G$ called inverse, satisfying\\
+\emph{Associative law}
+\[\begin{tikzcd}
+    G\times G\times G \ar[r, "{\mu\times\operatorname{id}}"] \ar[d, "{\operatorname{id}\times\mu}"'] & G\times G \ar[d, "\mu"] \\
+    G\times G \ar[r, "\mu"] & G.
+\end{tikzcd}\]
+\noindent\emph{Identity law}
+\[\begin{tikzcd}
+     & G \ar[dl, "\operatorname{id}\times e"'] \ar[d, "\operatorname{id}"] \ar[dr, "{e\times\operatorname{id}}"] & \\
+    G\times G \ar[r, "\mu"] & G & G\times G. \ar[l, "\mu"']
+\end{tikzcd}\]
+\noindent\emph{Inverse}
+\[\begin{tikzcd}
+    & G \ar[dl, "\operatorname{id}\times i"'] \ar[d, "e"] \ar[dr, "{i\times\operatorname{id}}"] & \\
+    G\times G \ar[r, "\mu"] & G & G\times G. \ar[l, "\mu"']
+\end{tikzcd}\]
+where $e$ is the composition $G\to * \to G$.
+
+\begin{lem}
+    If a functor preserves product, then it preserves group objects.
+\end{lem}
+
+Now we study topological groups.
+Topological groups are group objects in category $\mathsf{Top}$, that is, $G$ is a topological group if it is a topological space and multiplication and inverse are continuous.
+We want to show that
+\begin{prop}\label{top group}
+    The fundamental group of a topological group is ableian.
+\end{prop}
+
+This proposition can be deduced by given direct homotopies, but we will adopt some ``abstract nonsense'' here.
+
+\begin{lem}
+    Fundamental group functor $\pi_1:\mathsf{Top}^*\to\mathsf{Grp}$ preserves product.
+\end{lem}
+\begin{proof}
+    We will check the universal properties elaborately.
+    Let $\{X_\alpha\}_{\alpha\in A}$ be topological spaces, $(X,p_\alpha)$ be their product.
+    Let $G$ be a group, together with a family of homomorphisms $f_\alpha:G\to\pi_1(X_\alpha,x)$.
+    Choose an element $g\in G$, suppose $f_\alpha(g)=[\gamma_\alpha]\in\pi_1(X_\alpha,x)$, $\alpha\in A$.
+    Then $\gamma_\alpha:I\to X_\alpha$, by universal property, we have a $\gamma:I\to X$ such that $p_\alpha\circ\gamma=\gamma_\alpha$.
+    Thus we define $f:G\to\pi_1(X,x)$ by $f(g)=[\gamma]$, then $p_{\alpha*}[\gamma]=[\gamma_\alpha]$.
+    It's clear that such construction must be unique, hence $\pi_1(X,x)$ satisfies the universal property.
+    Therefore
+    \[\pi_1\left(\prod_{\alpha\in A}X_\alpha,x\right)=\prod_{\alpha\in A}\pi_1(X_\alpha,x).\qedhere\]
+\end{proof}
+
+\begin{lem}
+    The group objects in $\mathsf{Grp}$ are abelian groups.
+\end{lem}
+\begin{proof}
+    The inverse is defined by $g\mapsto g^{-1}$, but it is a homomorphism, we have $(gh)^{-1}=g^{-1}h^{-1}=h^{-1}g^{-1}$, hence the group object is abelian.
+\end{proof}
+
+Now the proof can be reduced into one sentence.
+\begin{proof}[Proof of Proposition~\ref{top group}]
+    Since fundamental group functor respects products, it maps group objects to group objects, that is, topological groups to abelian groups.
+\end{proof}
+
+\end{document}
