@@ -3,14 +3,18 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{geometry}
 \usepackage{tikz-cd}
 \usepackage{mathrsfs}
 \usepackage{hyperref}
+
+\allowdisplaybreaks[4]
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
 \theoremstyle{definition}
 \newtheorem*{defn}{Definition}
 \newtheorem{eg}[thm]{Example}
@@ -18,6 +22,7 @@
 \newtheorem{rem}[thm]{Remark}
 
 \DeclareMathOperator*{\colim}{colim}
+\DeclareMathOperator{\sk}{sk}
 
 \title{Seminar 1: Fundamental Group}
 \author{Zeng Mengchen}
@@ -135,13 +140,13 @@ A morphism $f\in\hom(A,B)$ is called an \emph{isomorphism} if there exists a $g\
 We list some frequently used categories here.
 \begin{itemize}
     \item $\mathsf{Set}$, category of sets, with morphisms to be mappings.
-    \item $\mathsf{Grpd}$, category of groupoids.
-    Groupoids are defined to be small categories (i.e.\ whose collection of objects is a set) with all morphisms are isomorphisms, and morphisms between groupoids are functors (whose definition will be expalined later).
+    \item $\mathsf{Grpd}$, category of small groupoids.
+    Small groupoids are defined to be small categories (i.e.\ whose collection of objects is a set) with all morphisms are isomorphisms, and morphisms between groupoids are functors (whose definition will be expalined later).
     \item $\mathsf{Grp}$, category of groups.
     Groups are groupoids with single object.
     \item $\mathsf{Ab}$, category of abelian groups.
     \item $\mathsf{Top}$, category of topological spaces, with morphisms to be continuous mappings, i.e.\ maps.
-    \item $\mathsf{Top}^*$, category of pointed topological spaces, with morphisms to be maps that map the base point to base point.
+    \item $\mathsf{Top}_*$, category of pointed topological spaces, with morphisms to be maps that map the base point to base point.
 \end{itemize}
 
 We also define the \emph{opposite category} of a category $\mathsf{C}$ (denoting $\mathsf{C}^{\mathrm{op}}$) consisting of same objects as $\mathsf{C}$ and $\hom_{\mathsf{C}^{\mathrm{op}}}(A,B)=\hom_\mathsf{C}(B,A)$.
@@ -149,6 +154,7 @@ We also define the \emph{opposite category} of a category $\mathsf{C}$ (denoting
 \subsection{Functors and Natural Transformations}
 
 We define a \emph{covariant functor} $F$ from category $\mathsf{C}$ to category $\mathsf{D}$ to be an assignment of each object $A$ in $\mathsf{C}$ an object $F(A)$ in $\mathsf{D}$, and of each morphism $f$ in $\hom(A,B)$ a morphism $F(f)\in\hom(F(A),F(B))$.
+The functor $F:\mathsf{C}\to\mathsf{D}$ should be distributive to composition and preserve identity, that is, $F(g\circ f)=F(f)\circ F(g)$ for any $f\in\hom(A,B)$, $g\in\hom(B,C)$ and $F(\operatorname{id}_A)=\operatorname{id}_{F(A)}$.
 Also we define a \emph{contravariant functor} from $\mathsf{C}$ to $\mathsf{D}$ to be a covariant functor from $\mathsf{C}^{\mathrm{op}}$ to $\mathsf{D}$.
 
 A \emph{natural transformation} from a functor $F:\mathsf{C}\to\mathsf{D}$ to a functor $G$ is a family of morphisms $\varphi_A:F(A)\to G(A)$ making the following diagram commute for any object $A,B$ and $f\in\hom(A,B)$
@@ -171,7 +177,7 @@ A \emph{natural transformation} from a functor $F:\mathsf{C}\to\mathsf{D}$ to a 
         \item The natural embedding of double dual in the category of vector spaces.
         Let $\operatorname{Id}$ be the identity functor, and denote the double dual of $V$ by $V^{**}$.
         Then $v\mapsto(f\mapsto f(v))$ for any $v\in V$ and linear functional $f$ defines an injection from $V$ to $V^{**}$.
-        One can check the family of injections consists a natural transformation from $\operatorname{Id}$ to double dual.
+        One can check the family of injections consists a natural transformation from $\operatorname{id}$ to double dual.
         In particular, if $V$ is finite dimensional, this shows $V^{**}$ is canonically isomorphic to $V$.
     \end{enumerate}
 \end{eg}
@@ -188,7 +194,7 @@ Let $A$ be an object in $\mathsf{C}$, then there is a functor that maps all obje
 Denote this $\mathsf{I}$-diagram by $\underline{A}$.
 
 Let $F$ be an $\mathsf{I}$-diagram, the \emph{colimit} of $F$ is the initial object among all morphisms having the form $\eta:F\to\underline{A}$, that is, $\eta$ factors through $\iota:F\to\underline{\colim{F}}$.
-Conversely, the \emph{limit} of $F$ is the terminal object among all such morphisms, that is, $\varepsilon:F\to\underline{A}$ factors through $\pi:F\to\underline{\lim{F}}$.
+Conversely, the \emph{limit} of $F$ is the terminal object among all such morphisms, that is, $\varepsilon:\underline{A}\to F$ factors through $\pi:\underline{\lim{F}}\to F$.
 Expressing in diagrams, for each map $f:D\to D'$ in $\mathsf{I}$, we have the commutative diagram for colimit:
 \[\begin{tikzcd}
     F(D)\ar[rr, "{F(f)}"] \ar[dr, "\iota"] \ar[ddr, "\eta"] & & F(D') \ar[dl, "\iota"] \ar[ddl, "\eta"] \\
@@ -227,9 +233,8 @@ For limits there are also similar notations.
         \item Equalizers and coequalizers.
         This is the limit and colimit of the following diagram
         \[\begin{tikzcd}
-            d \ar[r, shift left] \ar[r, shift right] & d',
+            d \ar[r, shift left] \ar[r, shift right] & d'.
         \end{tikzcd}\]
-        where the double right arrow indicates all nonidentity morphisms.
     \end{enumerate}
 \end{eg}
 
@@ -252,7 +257,7 @@ A category is said to be \emph{complete} if it has all limits, and to be \emph{c
     \end{tikzcd}\]
     We claim $U$ is the colimit of $\{U_i\}_{i\in\mathsf{I}}$.
     We must verify the universal property.
-    Suppose given a family of morphisms $f_i:U_i\to A$ compatible with morphisms in $\mathsf{I}$, we check arbitary commutative diagram
+    Suppose given a family of morphisms $f_i:U_i\to A$ compatible with morphisms in $\mathsf{I}$, we check arbitrary commutative diagram
     \[\begin{tikzcd}
         U_i \ar[rr, "f"] \ar[dr, "{f_i}"'] & & U_j \ar[dl, "{f_j}"] \\
          & A. &
@@ -271,6 +276,36 @@ A category is said to be \emph{complete} if it has all limits, and to be \emph{c
     the last thing we need to do is to show $f_i=\gamma_i\circ\iota_i$, but this follows directly from the commutativity of whole diagram.
 \end{proof}
 
+\begin{cor}
+    $\mathsf{Grp}$ is cocomplete.
+\end{cor}
+\begin{proof}
+    We show that $\mathsf{Grp}$ verifies coequalizers.
+    Let $\varphi:G\to H$ and $\psi:G\to H$ be two homomorphisms, set
+    \[K=H/\langle\varphi(g)\sim\psi(g)|\ g\in G\rangle.\]
+    It's clear that $K$ satisfies the universal property.
+\end{proof}
+
+\begin{cor}
+    The pushout in $\mathsf{Grp}$ 
+    $\begin{tikzcd}
+        H & G \ar[l,"\varphi"'] \ar[r, "\psi"] & K
+    \end{tikzcd}$
+    is given explicitly by $H*K$ quotient out the normal subgroup generated by $\varphi(g)\psi(g^{-1})$ for all $g\in G$.
+\end{cor}
+\begin{proof}
+    By the construction of above proposition, the pushout is the coequalizer of
+    \[\begin{tikzcd}
+        G*H*K*G*G \ar[r,shift left, "f"] \ar[r,shift right, "\operatorname{id}"'] & G*H*K.
+    \end{tikzcd}\]
+    Then by above corollary, the coequalizer must be
+    \begin{align*}
+        G*H*K/\langle g_1hk\varphi(g_2)\psi(g_3)\sim g_1hkg_2g_3\rangle&\cong G*H*K/\langle\varphi(g_2)\psi(g_3)\sim g_2g_3\rangle\\
+        &\cong G*H*K/\langle\varphi(g)\sim\psi(g)\sim g\rangle\\
+        &\cong H*K/\langle\varphi(g)\sim\psi(g)\rangle.\qedhere
+    \end{align*}
+\end{proof}
+
 By using opposite category formally, we can obtain
 \begin{prop}
     A category is complete if and only if it has products and equalizers.
@@ -278,7 +313,7 @@ By using opposite category formally, we can obtain
 
 \subsection{Group Object}
 
-Let $\mathsf{C}$ be a category which has products and initial object $*$.
+Let $\mathsf{C}$ be a category which has products and terminal object $*$.
 A \emph{group object} consists of an object $G$ and a morphism $\mu:G\times G\to G$ called multiplication, a morphism $e:*\to G$ called unit element and a morphism $i:G\to G$ called inverse, satisfying\\
 \emph{Associative law}
 \[\begin{tikzcd}
@@ -302,16 +337,16 @@ where $e$ is the composition $G\to * \to G$.
 \end{lem}
 
 Now we study topological groups.
-Topological groups are group objects in category $\mathsf{Top}$, that is, $G$ is a topological group if it is a topological space and multiplication and inverse are continuous.
+Topological groups with base point $e$ are group objects in category $\mathsf{Top}_*$, that is, $G$ is a topological group if it is a topological space and multiplication and inverse are continuous.
 We want to show that
 \begin{prop}\label{top group}
-    The fundamental group of a topological group is ableian.
+    The fundamental group of a topological group (with base point $e$) is abelian.
 \end{prop}
 
 This proposition can be deduced by given direct homotopies, but we will adopt some ``abstract nonsense'' here.
 
 \begin{lem}
-    Fundamental group functor $\pi_1:\mathsf{Top}^*\to\mathsf{Grp}$ preserves product.
+    Fundamental group functor $\pi_1:\mathsf{Top}_*\to\mathsf{Grp}$ preserves product.
 \end{lem}
 \begin{proof}
     We will check the universal properties elaborately.
@@ -335,6 +370,241 @@ This proposition can be deduced by given direct homotopies, but we will adopt so
 Now the proof can be reduced into one sentence.
 \begin{proof}[Proof of Proposition~\ref{top group}]
     Since fundamental group functor respects products, it maps group objects to group objects, that is, topological groups to abelian groups.
+\end{proof}
+
+\subsection{Categorical Equivalence and Skeleton}
+
+We introduce the notion of two categories being equivalent.
+Two categories $\mathsf{C}$ and $\mathsf{D}$ are \emph{equivalent} if there are functors $F:\mathsf{C}\to\mathsf{D}$ and $G:\mathsf{D}\to\mathsf{C}$ and natural isomorphisms $G\circ F\to\operatorname{id}_\mathsf{C}$ and $F\circ G\to\operatorname{id}_\mathsf{D}$.
+
+Also we introduce the notion of a \emph{skeleton} $\sk\mathsf{C}$ of a category $\mathsf{C}$.
+This is a ``full'' subcategory with one object from each isomorphism class of objects of $\mathsf{C}$.
+``Full'' means that the morphisms between two objects of $\sk\mathsf{C}$ are the morphisms between all the objects in two isomorphism classes.
+
+$\sk\mathsf{C}$ is equivalent to $\mathsf{C}$.
+The inclusion functor $J:\sk\mathsf{C}\to\mathsf{C}$ gives the equivalence.
+An inverse functor $F:\mathsf{C}\to\sk\mathsf{C}$ is obtained by letting $F(A)$ be the unique object in $\sk\mathsf{C}$ that is isomorphic to $A$, choosing an isomorphism $\alpha_A:A\to F(A)$ and defining $F(f)=\alpha_B\circ f\circ \alpha_A^{-1}:F(A)\to F(B)$ for a morphism $f\in\hom(A,B)$.
+We choose $\alpha_A$ to be identity if $A$ is in $\sk\mathsf{C}$, and then $F\circ J=\operatorname{id}$, and by definition $\alpha_A$'s specify a natural isomorphism $\alpha:\operatorname{id}\to J\circ F$.
+
+\section{Fundamental Groupoids}
+Recall that a \emph{groupoid} is a category whose morphisms are all isomorphisms.
+Let morphisms between groupoids be functors, we have the category $\mathsf{Grpd}$ of groupoids.
+
+The \emph{fundamental groupoid} is a functor $\Pi:\mathsf{Top}\to\mathsf{Grpd}$ that maps a space $X$ to all the equivalence classes of paths in $X$.
+
+We mention here the set of automorphisms of a point $x\in X$ is exactly the fundamental group $\pi_1(X,x)$.
+Therefore, we have
+\begin{prop}
+    Let $X$ be a path connected space.
+    For each point $x\in X$, the inclusion $\pi_1(X,x)\to\Pi(X)$ is an equivalence of categories.
+\end{prop}
+\begin{proof}
+    We regard $\pi_1(X,x)$ as a category with a single object $x$, and it is a skeleton of $\Pi(X)$.
+    To show this, we notice that any $y\in X$ can be connected with $x$ by a path $\gamma$, and $[\gamma]$ is an isomorphism in $\Pi(X)$.
+\end{proof}
+
+\section{The van Kampen Theorem}
+
+\subsection{Statement of the Theorem}
+
+We state the \textsc{van Kampen} theorem as follows.
+\begin{thm}[van Kampen]\label{van Kampen}
+    Let $X$ be a path connected space, choose a base point $x\in X$.
+    Let $\mathscr{O}$ be a cover of $X$ by path connected open subsets such that the intersection of finite many subsets in $\mathscr{O}$ is still in $\mathscr{O}$, and $x$ is in each $U\in\mathscr{O}$.
+    Regard $\mathscr{O}$ as a category whose morphisms are inclusions of subsets, and observe that the functor $\pi_1(\cdot,x)$ restricted to the space and maps in $\mathscr{O}$, gives a diagram
+    \[\pi_1|_\mathscr{O}:\mathscr{O}\to\mathsf{Grp}\]
+    of groups.
+    Then we have
+    \[\pi_1(X,x)\cong\colim_{U\in\mathscr{O}}\pi_1(U,x).\] 
+\end{thm}
+
+A useful special case of van Kampen theorem is that the space is covered by two open subsets.
+\begin{cor}
+    Let $X=U\cup V$ with $U,V$ open and path connected, $x\in U\cap V$.
+    Then $\pi_1(X,x)$ is the pushout of the following diagram
+    \[\begin{tikzcd}
+        \pi_1(U\cap V,x) \ar[r] \ar[d] & \pi_1(U,x) \ar[d, dashed] \\
+        \pi_1(V,x) \ar[r, dashed] & \pi_1(X,x).
+    \end{tikzcd}\]
+\end{cor}
+
+\subsection{Examples of the van Kampen Theorem}
+
+We give some examples of using van Kampen theorem to calculate fundamental group.
+We now drop the notation for the base point, writing $\pi_1(X)$ instead of $\pi_1(X,x)$.
+
+\begin{prop}
+    Let $X=\bigvee_{i\in I}X_i$ with $X_i$'s being path connected, and each of $X_i$ contains a contractible neighborhood $V_i$ for its base point.
+    Then $\pi_1(X)$ is the coproduct (i.e.\ free product) of groups $\pi_1(X_i)$.
+\end{prop}
+\begin{proof}
+    Let $U_i$ be the union of $X_i$ and $V_j$ for all $j\neq i$.
+    Take $\mathscr{O}$ be the $U_i$ and their finite intersections, and apply van Kampen theorem to $\mathscr{O}$.
+    Since any intersection of two or more of the $U_i$ is contractible, the intersections make no contribution to the colimit, and the colimit must be the coproduct.
+\end{proof}
+
+\begin{cor}\label{wedge circle}
+    The fundamental group of a wedge sum of circles is a free group with one generator for each circle.
+\end{cor}
+
+We now give two examples of computing the fundamental group of compact surfaces.
+By the classification theorem of compact surfaces, any compact surface is homeomorphic to a sphere, or to a connected sum of tori $\mathbb{T}^2:=\mathbb{S}^1\times\mathbb{S}^1$, or to a connect sum of projective planes $\mathbb{RP}^2=\mathbb{S}^2/\mathbb{Z}_2$.
+We will see shortly that $\pi_1(\mathbb{RP}^2)=\mathbb{Z}_2$.
+Using this fact, we can compute the fundamental group of all compact surfaces by induction.
+We will illustrate by two examples.
+
+\begin{eg}
+    We compute the fundamental group of two-holed torus $\mathbb{T}^2\#\mathbb{T}^2$.
+    We decompose the computation into several steps.
+
+    \emph{Step 1}. $\pi_1(\mathbb{T}^2-\{\mathrm{pt}\})\cong\mathbb{Z}*\mathbb{Z}$.
+    Linear homotopy shows $\mathbb{T}^2-\{\mathrm{pt}\}\simeq\mathbb{S}^1\vee\mathbb{S}^1$, the conclusion follows from Corollary~\ref{wedge circle}.
+
+    \emph{Step 2}. Let $A\subset\mathbb{T}^2-\mathbb{D}^2$ be an annulus with inner boundary being $\partial\mathbb{D}^2$, $A'$ also be an annulus on another punched torus chosen similarly, then $\mathbb{T}^2\#\mathbb{T}^2\cong(\mathbb{T}^2-\mathbb{D}^2)\sqcup_f(\mathbb{T}^2-\mathbb{D}^2)$ with a suitable $f:A\to A'$.
+    We compute $\pi_1(A)\hookrightarrow\pi_1(\mathbb{T}^2-\mathbb{D}^2)$.
+    First, we notice that $\mathbb{T}^2-\mathbb{D}^2\simeq\mathbb{T}^2-\{\mathrm{pt}\}$.
+    Moreover, since annulus is homeomorphic to $\mathbb{S}^1\times I$, a loop in $I$ does not contribute to $\pi_1(A)$, hence we check a loop in the outer boundary of $A$.
+    Let $a,b$ be the two generators of each circle in $\mathbb{S}^1\vee\mathbb{S}^1$, then the linear homotopy sends a loop with $n$ rounds to $(aba^{-1}b^{-1})^n$ (this can be shown by the polyhedral representation of $\mathbb{T}^2$).
+    Thus we have
+    \begin{align*}
+        \pi_1(A)\cong\mathbb{Z}&\hookrightarrow\pi_1(\mathbb{T}^2-\mathbb{D}^2)\cong\mathbb{Z}*\mathbb{Z}\\
+        n&\mapsto(aba^{-1}b^{-1})^n.
+    \end{align*}
+
+    \emph{Step 3}. Apply van Kampen theorem to the cover $\{\mathbb{T}^2-\mathbb{D}^2,\mathbb{T}^2-\mathbb{D}^2,A\}$, we have $\pi_1(\mathbb{T}^2\#\mathbb{T}^2)$ is the pushout
+    \[\begin{tikzcd}
+        \pi_1(A) \ar[r] \ar[d] & \pi_1(\mathbb{T}^2-\mathbb{D}^2)\\
+        \pi_1(\mathbb{T}^2-\mathbb{D}^2). &
+    \end{tikzcd}\]
+    Let the fundamental group of two punched torus be $\langle a_1,b_1\rangle$ and $\langle a_2,b_2\rangle$ respectively, then we have
+    \[\pi_1(\mathbb{T}^2\#\mathbb{T}^2)\cong\langle a_1,b_1,a_2,b_2|\ a_1b_1a_1^{-1}b_1^{-1}a_2b_2a_2^{-1}b_2^{-1}\rangle,\]
+    here the second inclusion reverses the orientation.
+\end{eg}
+
+\begin{eg}
+    The same process can be applied to Klein bottle $\mathbb{RP}^2\#\mathbb{RP}^2$.
+    The key points are $\mathbb{RP}^2-\{\mathrm{pt}\}\simeq\mathbb{S}^1$,
+    \begin{align*}
+        \pi_1(A)\cong\mathbb{Z}&\hookrightarrow\pi_1(\mathbb{RP}^2-\mathbb{D}^2)\cong\mathbb{Z}\\
+        n&\mapsto a^{2n},
+    \end{align*}
+    and hence $\pi_1(\mathbb{RP}^2\#\mathbb{RP}^2)\cong\langle a,b|\ a^2=b^2\rangle$.
+    Notice that this group is isomorphic to $\langle a,b|\ abab^{-1}\rangle$, which is computed by the polyhedral representation of Klein bottle.
+\end{eg}
+
+\section{Proof of van Kampen Theorem}
+
+We provide the proof of van Kampen theorem in this section.
+We first state the groupoid version of van Kampen theorem.
+
+\begin{thm}[van Kampen]
+    Let $\mathscr{O}$ be a cover of a space $X$ by path connected open subsets such that the intersection of finite many subsets in $\mathscr{O}$ is again in $\mathscr{O}$.
+    Regard $\mathscr{O}$ as a category whose morphisms are the inclusions of subsets and observe that the functor $\Pi$, restricted to the space and maps in $\mathscr{O}$, gives a diagram
+    \[\Pi|_\mathscr{O}:\mathscr{O}\to\mathsf{Grpd}\]
+    of groupoids.
+    Then we have
+    \[\Pi(X)\cong\colim_{U\in\mathscr{U}}\Pi(U).\]
+\end{thm}
+\begin{proof}
+    We must verify the universal property.
+    Let $\mathsf{C}$ be a groupoid, and a morphism $\eta:\Pi|_\mathscr{O}\to\underline{\mathsf{C}}$ of $\mathscr{O}$-shaped diagrams of groupoids, we must construct a morphism, i.e.\ a functor $\tilde\eta:\Pi(X)\to\mathsf{C}$ of groupoids that restricts to $\eta_U$ on $\Pi(U)$ for each $U\in\mathscr{O}$.
+
+    On objects, that is, the points of $X$, we must define $\tilde\eta(x)=\eta_U(x)$ for $x\in U$.
+    This is independent of the choice of $U$ since $\mathscr{O}$ is closed under finite intersections.
+
+    We now consider morphisms, that is, the homotopy classes of paths in $X$.
+    If $f:x\to y$ lies entirely in a particular $U$, then we must define $\tilde\eta([f])=\eta_U([f])$.
+    Again, since $\mathscr{O}$ is closed under finite intersections, this specification is independent of the choice of $U$ if $f$ lies entirely in more than one $U$.
+    By compactness, any path $f$ is the composite of finite many paths $f_i$, each of which lies entirely in single $U$.
+    Then we define $\tilde\eta([f])$ to be the composite of $\tilde\eta([f_i])$'s.
+    We must show $\tilde\eta$ is well-defined.
+    Suppose $h:f\simeq g$ is a homotopy, then the subdivision argument shows $\tilde\eta([f])=\tilde\eta([g])$.
+    Precisely, this means we subdivide $I\times I$ into sufficiently small subsquares, and by Lebesgue's lemma, each square falls into a single $U\in\mathscr{O}$.
+    Then $[f]=[g]$ in $\Pi(X)$ is a consequence of a finite number of relations, each of which holds in one of the $\Pi(U)$.
+    Therefore $\tilde\eta([f])=\tilde\eta([g])$.
+
+    The above construction is clearly unique, hence this verifies the universal property and proves the theorem.
+\end{proof}
+
+The fundamental group version of van Kampen theorem (Theorem~\ref{van Kampen}) is proved by categorical nonsense.
+
+\begin{lem}
+    The van Kampen theorem (Theorem~\ref{van Kampen}) holds when the cover $\mathscr{O}$ is finite.
+\end{lem}
+\begin{proof}
+    This is based on the categorical nonsense about skeleta of categories.
+    Given a morphism between $\mathscr{O}$-shaped diagrams $\eta:\pi_1|_\mathscr{O}\to\underline{G}$, we must show that there is a unique homomorphism $\tilde\eta:\pi_1(X,x)\to G$ that restricts to $\eta_U$ on $\pi_1(U,x)$.
+
+    Let $J_U:\pi_1(U,x)\to\Pi(U)$ be the inclusion functor, then $J_U$ is a categorical equivalence.
+    The inverse is given by for $y\in X$, the path $c_x$ if $y=x$, so that $F_U\circ J_U=\operatorname{id}$; and a path lies entirely in $U$ as long as $y\in U$, this is possible since $\mathscr{O}$ is finite, we can take $U$ be the intersection of all open subsets in $\mathscr{O}$ that contains $y$.
+    This ensures the chosen paths determine compatible inverse equivalence.
+    Thus the functors
+    $\begin{tikzcd}
+        \pi(U)\ar[r, "{F_U}"] & \pi_1(U,x) \ar[r, "{\eta_U}"] & G
+    \end{tikzcd}$
+    specify an $\mathscr{O}$-shaped diagram of groupoids $\Pi|_\mathscr{O}\to\underline{G}$.
+    By the fundamental groupoid version of van Kampen theorem, there is a unique map of groupoids
+    $\xi:\Pi(X)\to G$
+    that restricts to $\eta_U\circ F_U$ on $\Pi(U)$ for each $U$.
+    Then the composite
+    $\begin{tikzcd}
+        \pi_1(X,x) \ar[r, "J"] & \Pi(X) \ar[r, "\xi"] & G
+    \end{tikzcd}$
+    is the required homomorphism $\tilde\eta$.
+    By the commutativity of the diagram
+    \[\begin{tikzcd}
+        \ & \pi_1(X,x) \ar[ld, "{\operatorname{id}}"'] & \ \\
+        \pi_1(X,x) \ar[r, "J"] & \Pi(X) \ar[u, "F"'] \ar[r, "\xi"] & G \\
+        \pi_1(U,x) \ar[u, dashed] \ar[r, "{J_U}"] \ar[rr, bend right, "{\operatorname{id}}"] & \Pi(U) \ar[u] \ar[r, "{F_U}"] & \pi_1(U,x), \ar[u, "{\eta_U}"'] 
+    \end{tikzcd}\]
+    $\tilde\eta$ restricts to $\eta_U$ on $\pi_1(U,x)$ for $U\in\mathscr{O}$.
+    It is unique because $\xi$ is unique.
+    Hence we verified the universal property.
+\end{proof}
+
+\begin{proof}[Proof of van Kampen Theorem]
+    Let $\mathscr{F}$ be the set of those finite subsets of the cover $\mathscr{O}$ that are closed under finite intersection.
+    For $\mathscr{S}\in\mathscr{F}$, let $U_\mathscr{S}$ be the union of $U$'s in $\mathscr{S}$.
+    Then $\mathscr{S}$ is a cover of $U_\mathscr{S}$ to which the lemma applies.
+    Thus
+    \[\colim_{U\in\mathscr{S}}\pi_1(U,x)\cong\pi_1(U_\mathscr{S},x).\]
+    Regard $\mathscr{F}$ as a category with a morphism $\mathscr{S}\to\mathscr{T}$ whenever $U_\mathscr{S}\subset U_\mathscr{T}$.
+    We claim first that
+    \[\colim_{\mathscr{S}\in\mathscr{F}}\pi_1(U_\mathscr{S},x)\cong\pi_1(X,x).\]
+    In fact, by the subdivision argument, any loop $I\to X$ and any homotopy equi\-valence $h:I\times I\to X$ between loops has image in some $U_\mathscr{S}$.
+    This implies that $\pi_1(X,x)$, together with the homomorphisms $\pi_1(U_\mathscr{S},x)\to\pi_1(X,x)$, has the universal property that characterizes the claimed colimit.
+    We claim next that
+    \begin{align*}
+        \colim_{U\in\mathscr{O}}\pi_1(U,x)&\cong\colim_{\mathscr{S}\in\mathscr{F}}\pi_1(U_\mathscr{S},x)\\
+        &\cong\colim_{\mathscr{S}\in\mathscr{F}}\colim_{U\in\mathscr{S}}\pi_1(U,x),
+    \end{align*}
+    and this will complete the proof.
+    By a comparison of universal properties, this iterated colimit is isomorphic to the single colimit
+    \[\colim_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1(U,x),\]
+    here the indexing category $(\mathscr{O},\mathscr{F})$ has objects the pairs $(U,\mathscr{S})$ with $U\in\mathscr{S}$; a morphism $(U,\mathscr{S})\to(V,\mathscr{T})$ whenever both $U\subset V$ and $U_\mathscr{S}\subset U_\mathscr{T}$.
+    We show the isomorphism.
+    We first give a general construction.
+    For categories $\mathsf{C}\xrightarrow{F}\mathsf{D}\xrightarrow{G}\mathsf{E}$ with $\mathsf{E}$ cocomplete, we construct a natural morphism $F_*:\colim_{c\in\mathsf{C}}G\circ F(c)\to\colim_{d\in\mathsf{D}}G(d)$.
+    Let $c\in\mathsf{C}$, then $F(c)\in\mathsf{D}$, we have a natural morphism $G\circ F(c)=G(F(c))\to\colim_{d\in\mathsf{D}}G(d)$, and then by universal property, there is a unique $F_*:\colim_{c\in\mathsf{C}}G\circ F(c)\to\colim_{d\in\mathsf{D}}G(d)$.
+    Now let functors $i:\mathscr{O}\to(\mathscr{O},\mathscr{F})$, $U\mapsto(U,\{U\})$, and $p:(\mathscr{O},\mathscr{F})\to\mathscr{O}$, $(U,\mathscr{S})\to U$.
+    We omit the notation for base point, and the required isomorphism becomes
+    \[\colim_{U\in\mathscr{O}}\pi_1(U)\cong\colim_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1\circ p(U,\mathscr{S}).\]
+    Notice that $p\circ i=\operatorname{id}$, by the composite of functors
+    \[\mathscr{O}\xrightarrow{i}(\mathscr{O},\mathscr{F})\xrightarrow{p}\mathscr{O}\xrightarrow{\pi_1}\mathsf{Grp},\]
+    we have a commutative diagram
+    \[\begin{tikzcd}
+        \pi_1\circ p\circ i(U) \ar[r, equal] \ar[d] & \pi_1\circ p(U,\{U\})=\pi_1\circ p(U,\mathscr{S}) \ar[r, equal] \ar[d] & \pi_1(U) \ar[d] \\
+        \colim\limits_{U\in\mathscr{O}}\pi_1\circ p\circ i(U)\ar[r, "{i_*}"] \ar[rr, dashed, bend right] & \colim\limits_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1\circ p(U,\mathscr{S}) \ar[r, "{p_*}"] & \colim\limits_{U\in\mathscr{O}}\pi_1(U).
+    \end{tikzcd}\]
+    The right arrows in second row are homomorphisms induced by functor $i$ and $p$, hence the downward arrows are all natural homomorphisms.
+    But since $p\circ i=\operatorname{id}$, $\colim_{U\in\mathscr{O}}\pi_1\circ p\circ i(U)=\colim_{U\in\mathscr{O}}\pi_1(U)$, the dashed arrow must be identity.
+    Similarly, we have commutative diagram
+    \[\begin{tikzcd}
+        \pi_1\circ p\circ i\circ p(U,\mathscr{S}) \ar[r, equal] \ar[d] & \pi_1\circ p\circ i(U) \ar[r, equal] \ar[d] & \pi_1\circ p(U,\{U\})=\pi_1\circ p(U,\mathscr{S}) \ar[d]\\
+        \colim\limits_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1\circ p\circ i\circ p(U,\mathscr{S}) \ar[r, "p_*"] \ar[rr, bend right, dashed] & \colim\limits_{U\in\mathscr{O}}\pi_1\circ p\circ i(U) \ar[r, "i_*"] & \colim\limits_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1\circ p(U,\mathscr{S}),
+    \end{tikzcd}\]
+    and the dashed homomorphism is identity.
+    This shows $\colim_{U\in\mathscr{O}}\pi_1(U)\cong\colim_{(U,\mathscr{S})\in(\mathscr{O},\mathscr{F})}\pi_1\circ p(U,\mathscr{S})$.
 \end{proof}
 
 \end{document}
